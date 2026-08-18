@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 3.28...4.4)
 
-project(beman_bounds_test.example LANGUAGES CXX)
+project(beman.bounds_test.examples LANGUAGES CXX)
 
 if(PROJECT_IS_TOP_LEVEL)
     find_package(beman.bounds_test 0.1.0 EXACT REQUIRED)
@@ -27,5 +27,5 @@ function(add_bounds_test_example NAME)
     )
 endfunction()
 
-# FIXME: add_bounds_test_example(placeholder)
+add_bounds_test_example(placeholder)
 add_bounds_test_example(cartesian_plane)

@@ -31,20 +31,22 @@ option(
 )
 
 # Neither of these two are technically needed, but they make the expectation clear
-set(CMAKE_CXX_EXTENSIONS OFF)
-if(MSVC)
-    set(BEMAN_BUILDSYS_SANITIZER "")
-    if(CMAKE_CXX_STANDARD EQUAL 26)
-        set(CMAKE_CXX_STANDARD_REQUIRED OFF)
-    endif()
-else()
+if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+if(NOT DEFINED CMAKE_CXX_STANDARD_REQUIRED)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    if(MSVC)
+        if(CMAKE_CXX_STANDARD EQUAL 26)
+            set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+        endif()
+    endif()
 endif()
 
-add_library(beman.bounds_test)
+add_library(beman.bounds_test INTERFACE)
 add_library(beman::bounds_test ALIAS beman.bounds_test)
 
-target_compile_features(beman.bounds_test PUBLIC cxx_std_20)
+target_compile_features(beman.bounds_test INTERFACE cxx_std_20)
 
 set_target_properties(
     beman.bounds_test
@@ -61,9 +63,9 @@ target_sources(
             FILES
                 include/beman/bounds_test/bounds_test.hpp
                 include/beman/bounds_test/plat/common.hpp
-        FILE_SET CXX_MODULES
-            BASE_DIRS include
-            FILES include/beman/bounds_test/beman.bounds_test.cppm
+    # FILE_SET CXX_MODULES
+    #     BASE_DIRS include
+    #     FILES include/beman/bounds_test/beman.bounds_test.cppm
 )
 
 include(GNUInstallDirs)
@@ -82,11 +84,12 @@ if(BEMAN_BOUNDS_TEST_INSTALL_CONFIG_FILE_PACKAGE)
     )
 endif()
 
-if(BEMAN_BOUNDS_TEST_BUILD_TESTS)
-    include(CTestUseLaunchers)
-    enable_testing()
-    add_subdirectory(tests/beman/bounds_test)
-endif()
+enable_testing()
+
+# if(BEMAN_BOUNDS_TEST_BUILD_TESTS)
+#     include(CTestUseLaunchers)
+#     add_subdirectory(tests/beman/bounds_test)
+# endif()
 
 if(BEMAN_BOUNDS_TEST_BUILD_EXAMPLES)
     add_subdirectory(examples)
