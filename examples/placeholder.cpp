@@ -3,14 +3,17 @@
 #include <beman/bounds_test/bounds_test.hpp>
 // Alternatively: import beman.bounds_test;
 
+#include <limits>
+
 namespace bt = beman::bounds_test;
 
 int main(int argc, char** /* argv */) {
-  const volatile int runtime_value{argc};
+  static_assert(bt::can_convert_modular<unsigned>(1));
+  static_assert(bt::can_convert_modular<unsigned>(0));
+  static_assert(bt::can_convert_modular<unsigned>(-1));
+  static_assert(bt::can_convert_modular<unsigned>(std::numeric_limits<int>::min()));
+  static_assert(bt::can_convert_modular<unsigned>(std::numeric_limits<int>::max()));
 
-  const bool valid =
-      bt::can_convert_modular<unsigned>(runtime_value) &&
-      bt::can_convert<unsigned>(runtime_value);
-
+  const bool valid = bt::can_convert<unsigned>(argc);
   return valid ? 0 : 1;
 }

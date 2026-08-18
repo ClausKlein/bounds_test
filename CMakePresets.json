@@ -13,6 +13,7 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
         "CMAKE_INSTALL_MESSAGE": "LAZY",
         "CMAKE_SKIP_TEST_ALL_DEPENDENCY": false,
+        "BEMAN_BOUNDS_TEST_USE_MODULES": true,
         "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": true
       },
       "environment": {
@@ -98,7 +99,9 @@
         "_debug-base"
       ],
       "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "SYSTEM",
         "BEMAN_BUILDSYS_SANITIZER": "",
+        "BEMAN_BOUNDS_TEST_USE_MODULES": false,
         "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": false,
         "TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
       }
@@ -113,6 +116,7 @@
       ],
       "cacheVariables": {
         "CMAKE_LINKER_TYPE": "SYSTEM",
+        "BEMAN_BOUNDS_TEST_USE_MODULES": false,
         "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": false,
         "TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
       }
@@ -125,7 +129,6 @@
         "_debug-base"
       ],
       "cacheVariables": {
-        "CMAKE_LINKER_TYPE": "SYSTEM",
         "BEMAN_BUILDSYS_SANITIZER": "",
         "CMAKE_CXX_STANDARD_REQUIRED": false,
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
@@ -158,11 +161,7 @@
     {
       "name": "_root-build",
       "hidden": true,
-      "jobs": 0,
-      "targets": [
-        "all_verify_interface_header_sets",
-        "all"
-      ]
+      "jobs": 0
     },
     {
       "name": "gcc-debug",

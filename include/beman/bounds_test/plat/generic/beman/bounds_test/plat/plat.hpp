@@ -3,10 +3,10 @@
 #ifndef BEMAN_BOUNDS_TEST_PLAT_PLAT_HPP
 #define BEMAN_BOUNDS_TEST_PLAT_PLAT_HPP
 
+#include <beman/bounds_test/plat/common.hpp>
+
 #include <concepts>
 #include <limits>
-
-#include <beman/bounds_test/plat/common.hpp>
 
 namespace beman::bounds_test::detail {
 

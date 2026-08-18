@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+#include <beman/bounds_test/bounds_test.hpp>
+// Alternatively: import beman.bounds_test;
+
 #include <iostream>
 #include <limits>
 #include <optional>
 #include <type_traits>
 
-#include <beman/bounds_test/bounds_test.hpp>
-// Alternatively: import beman.bounds_test;
-
 namespace bt = beman::bounds_test;
+
+namespace {
 
 template <typename T>
 concept SignedNumber = std::is_arithmetic_v<T> && std::is_signed_v<T>;
@@ -20,14 +22,16 @@ struct Point {
 };
 
 template <SignedNumber T>
-static constexpr auto try_reflect_x_axis(Point<T>& p) noexcept {
+constexpr auto try_reflect_x_axis(Point<T>& p) noexcept {
   return bt::can_negate(p.y) ? std::optional<Point<T>>{std::in_place, p.x, static_cast<T>(-p.y)} : std::nullopt;
 }
 
 template <SignedNumber T>
-static constexpr auto try_reflect_y_axis(Point<T>& p) noexcept {
+constexpr auto try_reflect_y_axis(Point<T>& p) noexcept {
   return bt::can_negate(p.x) ? std::optional<Point<T>>{std::in_place, static_cast<T>(-p.x), p.y} : std::nullopt;
 }
+
+} // namespace
 
 int main() {
   auto test_reflect = [&](auto& pt) {

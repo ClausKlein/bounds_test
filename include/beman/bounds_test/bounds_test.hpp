@@ -3,15 +3,11 @@
 #ifndef BEMAN_BOUNDS_TEST_BOUNDS_TEST_HPP
 #define BEMAN_BOUNDS_TEST_BOUNDS_TEST_HPP
 
+#include <beman/bounds_test/plat/plat.hpp>
+
 #include <concepts>
 #include <limits>
 #include <utility>
-
-#ifdef __INTELLISENSE__
-#include "plat/generic/beman/bounds_test/plat/plat.hpp"
-#else
-#include <beman/bounds_test/plat/plat.hpp>
-#endif
 
 namespace beman::bounds_test {
 
