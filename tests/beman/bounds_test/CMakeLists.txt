@@ -5,7 +5,9 @@ find_package(Catch2 3 REQUIRED CONFIG)
 add_executable(beman.bounds_test.tests)
 target_sources(beman.bounds_test.tests PRIVATE bounds_test.test.cpp)
 target_compile_features(beman.bounds_test.tests PRIVATE cxx_std_20)
-target_compile_definitions(beman.bounds_test.tests PRIVATE __INTELLISENSE__)
+if(NOT BEMAN_BOUNDS_TEST_USE_MODULES)
+    target_compile_definitions(beman.bounds_test.tests PRIVATE __INTELLISENSE__)
+endif()
 target_link_libraries(
     beman.bounds_test.tests
     PRIVATE beman::bounds_test Catch2::Catch2WithMain
