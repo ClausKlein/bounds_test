@@ -3,12 +3,35 @@ cmake_minimum_required(VERSION 3.28...4.4)
 
 include(cmake/bootstrap_vcpkg.cmake)
 
+# CMake 4.4 does not record MSVC as supporting CXX26. Compiler detection occurs
+# during project(), before CMAKE_CXX_COMPILER_ID is available, so temporarily
+# allow standard decay and restore the requested strict setting afterward.
+set(beman_bounds_test_restore_required OFF)
+if(
+    CMAKE_VERSION VERSION_LESS 4.5
+    AND CMAKE_CXX_STANDARD EQUAL 26
+    AND (NOT DEFINED CMAKE_CXX_STANDARD_REQUIRED OR CMAKE_CXX_STANDARD_REQUIRED)
+)
+    set(beman_bounds_test_restore_required ON)
+    set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+endif()
+
 project(
     beman.bounds_test
     DESCRIPTION "A library for checking integer operation boundary conditions"
     LANGUAGES CXX
     VERSION 0.1.0
 )
+
+# Work around missing MSVC C++26 bookkeeping in CMake through version 4.4.
+if(beman_bounds_test_restore_required)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        set(CMAKE_CXX_STANDARD_REQUIRED OFF)
+    else()
+        set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    endif()
+endif()
+unset(beman_bounds_test_restore_required)
 
 # [CMAKE.SKIP_TESTS]
 option(
@@ -31,40 +54,62 @@ option(
 )
 
 # Neither of these two are technically needed, but they make the expectation clear
-set(CMAKE_CXX_EXTENSIONS OFF)
-if(MSVC)
-    set(BEMAN_BUILDSYS_SANITIZER "")
-    if(CMAKE_CXX_STANDARD EQUAL 26)
-        set(CMAKE_CXX_STANDARD_REQUIRED OFF)
-    endif()
-else()
+if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+
+if(NOT DEFINED CMAKE_CXX_STANDARD_REQUIRED)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-add_library(beman.bounds_test)
+option(
+    BEMAN_BOUNDS_TEST_USE_MODULES
+    "Provide beman.bounds_test as a C++ module"
+    OFF
+)
+if(BEMAN_BOUNDS_TEST_USE_MODULES)
+    set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+    add_library(beman.bounds_test STATIC)
+    target_compile_features(beman.bounds_test PUBLIC cxx_std_20)
+else()
+    add_library(beman.bounds_test INTERFACE)
+    target_compile_features(beman.bounds_test INTERFACE cxx_std_20)
+endif()
+
 add_library(beman::bounds_test ALIAS beman.bounds_test)
 
-target_compile_features(beman.bounds_test PUBLIC cxx_std_20)
+set_target_properties(beman.bounds_test PROPERTIES EXPORT_NAME bounds_test)
 
-set_target_properties(
-    beman.bounds_test
-    PROPERTIES
-        VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
-        EXPORT_NAME bounds_test
-)
-
-target_sources(
-    beman.bounds_test
-    PUBLIC
-        FILE_SET HEADERS
-            BASE_DIRS include
-            FILES
-                include/beman/bounds_test/bounds_test.hpp
-                include/beman/bounds_test/plat/common.hpp
-        FILE_SET CXX_MODULES
-            BASE_DIRS include
-            FILES include/beman/bounds_test/beman.bounds_test.cppm
-)
+if(BEMAN_BOUNDS_TEST_USE_MODULES)
+    target_sources(
+        beman.bounds_test
+        PUBLIC
+            FILE_SET HEADERS
+                BASE_DIRS include
+                FILES
+                    include/beman/bounds_test/bounds_test.hpp
+                    include/beman/bounds_test/plat/common.hpp
+            FILE_SET CXX_MODULES
+                BASE_DIRS include
+                FILES include/beman/bounds_test/beman.bounds_test.cppm
+    )
+else()
+    target_sources(
+        beman.bounds_test
+        PUBLIC
+            FILE_SET HEADERS
+                BASE_DIRS
+                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                    "${CMAKE_CURRENT_BINARY_DIR}/include"
+                FILES
+                    include/beman/bounds_test/bounds_test.hpp
+                    include/beman/bounds_test/plat/common.hpp
+    )
+    set_target_properties(
+        beman.bounds_test
+        PROPERTIES VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
+    )
+endif()
 
 include(GNUInstallDirs)
 include(cmake/check_plat.cmake)
@@ -82,9 +127,10 @@ if(BEMAN_BOUNDS_TEST_INSTALL_CONFIG_FILE_PACKAGE)
     )
 endif()
 
+enable_testing()
+
 if(BEMAN_BOUNDS_TEST_BUILD_TESTS)
     include(CTestUseLaunchers)
-    enable_testing()
     add_subdirectory(tests/beman/bounds_test)
 endif()
 

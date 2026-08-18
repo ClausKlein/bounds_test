@@ -13,7 +13,11 @@
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
         "CMAKE_INSTALL_MESSAGE": "LAZY",
         "CMAKE_SKIP_TEST_ALL_DEPENDENCY": false,
+        "BEMAN_BOUNDS_TEST_USE_MODULES": true,
         "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": true
+      },
+      "environment": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;RelWithDebInfo"
       }
     },
     {
@@ -88,26 +92,33 @@
     },
     {
       "name": "appleclang-debug",
-      "hidden": true,
       "displayName": "Appleclang Debug Build",
+      "generator": "Ninja",
       "inherits": [
         "_root-config",
         "_debug-base"
       ],
       "cacheVariables": {
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
+        "CMAKE_LINKER_TYPE": "SYSTEM",
+        "BEMAN_BUILDSYS_SANITIZER": "",
+        "BEMAN_BOUNDS_TEST_USE_MODULES": false,
+        "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": false,
+        "TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
       }
     },
     {
       "name": "appleclang-release",
-      "hidden": true,
       "displayName": "Appleclang Release Build",
+      "generator": "Ninja",
       "inherits": [
         "_root-config",
         "_release-base"
       ],
       "cacheVariables": {
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
+        "CMAKE_LINKER_TYPE": "SYSTEM",
+        "BEMAN_BOUNDS_TEST_USE_MODULES": false,
+        "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": false,
+        "TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
       }
     },
     {
@@ -150,11 +161,7 @@
     {
       "name": "_root-build",
       "hidden": true,
-      "jobs": 0,
-      "targets": [
-        "all_verify_interface_header_sets",
-        "all"
-      ]
+      "jobs": 0
     },
     {
       "name": "gcc-debug",
@@ -187,6 +194,7 @@
     {
       "name": "appleclang-debug",
       "configurePreset": "appleclang-debug",
+      "configuration": "Debug",
       "inherits": [
         "_root-build"
       ]
@@ -194,6 +202,7 @@
     {
       "name": "appleclang-release",
       "configurePreset": "appleclang-release",
+      "configuration": "RelWithDebInfo",
       "inherits": [
         "_root-build"
       ]
@@ -248,11 +257,13 @@
     {
       "name": "appleclang-debug",
       "inherits": "_test_base",
+      "configuration": "Debug",
       "configurePreset": "appleclang-debug"
     },
     {
       "name": "appleclang-release",
       "inherits": "_test_base",
+      "configuration": "RelWithDebInfo",
       "configurePreset": "appleclang-release"
     },
     {

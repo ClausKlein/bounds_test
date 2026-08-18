@@ -1,21 +1,29 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 check_plat(HAS_GNU_OVERFLOW HAS_MSVC_OVERFLOW)
 
+if(BEMAN_BOUNDS_TEST_USE_MODULES)
+    set(__scope PUBLIC)
+else()
+    set(__scope INTERFACE)
+endif()
+
 if(HAS_GNU_OVERFLOW)
     target_include_directories(
         beman.bounds_test
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gnu>
+        ${__scope}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gnu>
     )
     # elseif(HAS_MSVC_OVERFLOW)
     #   target_include_directories(
     #     beman.bounds_test
-    #     PUBLIC
+    #     ${__scope}
     #         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/msvc>
     #   )
 else()
     target_include_directories(
         beman.bounds_test
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/generic>
+        ${__scope}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/generic>
     )
 endif()
 
