@@ -10,21 +10,20 @@ if(PROJECT_IS_TOP_LEVEL)
     enable_testing()
 endif()
 
+# Use a shorter target/output name. The long dotted executable name triggers the
+# Apple linker’s defective ad-hoc signature for a small program.
 function(add_bounds_test_example NAME)
-    add_executable(beman.bounds_test.examples.${NAME})
-    target_sources(beman.bounds_test.examples.${NAME} PRIVATE ${NAME}.cpp)
-    target_compile_features(
-        beman.bounds_test.examples.${NAME}
-        PRIVATE cxx_std_20
+    set(target "beman.bounds_test.examples.${NAME}")
+
+    add_executable(${target})
+    target_sources(${target} PRIVATE ${NAME}.cpp)
+    target_compile_features(${target} PRIVATE cxx_std_20)
+    target_link_libraries(${target} PRIVATE beman::bounds_test)
+    set_target_properties(
+        ${target}
+        PROPERTIES OUTPUT_NAME "bounds-test-${NAME}"
     )
-    target_link_libraries(
-        beman.bounds_test.examples.${NAME}
-        PRIVATE beman::bounds_test
-    )
-    add_test(
-        NAME beman.bounds_test.examples.${NAME}
-        COMMAND beman.bounds_test.examples.${NAME}
-    )
+    add_test(NAME ${target} COMMAND ${target})
 endfunction()
 
 add_bounds_test_example(placeholder)

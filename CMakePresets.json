@@ -106,12 +106,13 @@
     {
       "name": "appleclang-release",
       "displayName": "Appleclang Release Build",
-      "generator": "Xcode",
+      "generator": "Ninja",
       "inherits": [
         "_root-config",
         "_release-base"
       ],
       "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "SYSTEM",
         "BEMAN_BOUNDS_TEST_BOOTSTRAP_VCPKG": false,
         "TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
       }
@@ -124,6 +125,7 @@
         "_debug-base"
       ],
       "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "SYSTEM",
         "BEMAN_BUILDSYS_SANITIZER": "",
         "CMAKE_CXX_STANDARD_REQUIRED": false,
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
